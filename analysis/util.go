@@ -46,7 +46,10 @@ func ReadContents(fileurl string) ([]string, error) {
 	}
 	s := bufio.NewScanner(f)
 	for s.Scan() {
-		vals = append(vals, s.Text())
+		// Ignore comments and empty lines
+		if !strings.Contains(s.Text(), "#") && len(s.Text()) > 1 {
+			vals = append(vals, s.Text())
+		}
 	}
 
 	return vals, nil
