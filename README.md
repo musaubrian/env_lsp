@@ -48,6 +48,7 @@ This tells neovim where to look for the binary, its name and attach it to the cu
 
 > [!NOTE]
 >
-> It depends on the `.env` or `.env.local` to be at the root of the project, anywhere else and it won't work
+> 1. It depends on the `.env` or `.env.local` to be at the root of the project, anywhere else and it won't work
+> 2. If both `.env` and `.env.local` exist at the root, it uses the `.env`
 
 
