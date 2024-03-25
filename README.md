@@ -4,9 +4,9 @@ Get completions on environment variables based on what is in your `.env` or `.en
 
 ## Why
 The fact that the only way to access environment variables in go/python is by using plain strings,
-thus can't easily get completions really annoyed me and whne I got the chance to be able to something about, I did
+and I couldn't get any completions really annoyed me and when I got the chance to be able to something about, I did
 
-Huge thanks to [Tj](https://github.com/tjdevres) on his lsp video, I based the entire thing of his [`educationlsp`](https://github.com/tjdevries/educationalsp)
+Huge thanks to [Tj](https://github.com/tjdevres) on his lsp video, I based the entire thing of his [`educationalsp`](https://github.com/tjdevries/educationalsp)
 highly recommend
 
 ## supported languages
@@ -24,10 +24,12 @@ go install github.com/musaubrian/env_lsp@latest
 
 2. Inform Neovim of the LSP
 
+Add this to any file that gets loaded by neovim
+
 ```lua
 local client = vim.lsp.start_client {
   name = "envlsp",
-  cmd = { "<path to where it was installed>" },
+  cmd = { "<path to where the binary was installed>" }, --I'd recommend the full path
 }
 
 if not client then
@@ -46,8 +48,6 @@ This tells neovim where to look for the binary, its name and attach it to the cu
 
 > [!NOTE]
 >
-> I should probably improve on this
+> It depends on the `.env` or `.env.local` to be at the root of the project, anywhere else and it won't work
 
-# caveats
-- It depends on the `.env` or `.env.local` to be at the root of the project, anywhere else and it won't work
 

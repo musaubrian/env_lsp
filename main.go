@@ -124,7 +124,7 @@ func writeResponse(writer io.Writer, msg any) {
 func getLogger(filename string) *log.Logger {
 	logfile, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
 	if err != nil {
-		panic("")
+		panic("Could not open logfile")
 	}
 
 	return log.New(logfile, "[env_lsp]", log.Ldate|log.Ltime|log.Lshortfile)
