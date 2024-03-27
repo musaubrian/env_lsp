@@ -37,16 +37,15 @@ func (s *State) TextDocumentCompletion(id int, params lsp.CompletionParams, comp
 	lines := strings.Split(content, "\n")
 	lineContent := lines[line]
 
-	prefixes := []string{"os.Getenv(\"", "os.getenv(\""}
-	for _, prefix := range prefixes {
-		if strings.HasPrefix(lineContent, prefix) {
-			return lsp.CompletionResponse{
-				Response: lsp.Response{
-					RPC: "2.0",
-					ID:  &id,
-				},
-				Result: []lsp.CompletionItem{},
-			}
+	// TODO:: Python broke somehow, will rethink it
+	prefix := "os.Getenv(\""
+	if strings.HasPrefix(lineContent, prefix) {
+		return lsp.CompletionResponse{
+			Response: lsp.Response{
+				RPC: "2.0",
+				ID:  &id,
+			},
+			Result: []lsp.CompletionItem{},
 		}
 	}
 	items := []lsp.CompletionItem{}
