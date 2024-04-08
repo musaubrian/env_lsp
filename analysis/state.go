@@ -21,15 +21,13 @@ func (s *State) OpenDocument(uri, text string) []lsp.Diagnostic {
 	filetype := strings.Split(uri, ".")[1]
 	s.Documents["filetype"] = filetype
 
-	// return getDiagnosticsForFile(text)
-	return []lsp.Diagnostic{}
+	return getDiagnosticsForFile(s, text)
 }
 
 func (s *State) UpdateDocument(uri, text string) []lsp.Diagnostic {
 	s.Documents[uri] = text
 
-	// return getDiagnosticsForFile(text)
-	return []lsp.Diagnostic{}
+	return getDiagnosticsForFile(s, text)
 }
 
 func (s *State) TextDocumentCompletion(id int, params lsp.CompletionParams, lg *log.Logger) lsp.CompletionResponse {
@@ -95,4 +93,41 @@ func (s *State) TextDocumentCompletion(id int, params lsp.CompletionParams, lg *
 		Result: []lsp.CompletionItem{},
 	}
 	return response
+}
+
+func getDiagnosticsForFile(s *State, text string) []lsp.Diagnostic {
+	diagnostics := []lsp.Diagnostic{}
+	prefixes := []string{"os.Getenv("}
+
+	if s.Documents["filetype"] == "py" {
+		prefixes = []string{"os.getenv(", "os.environ[", "os.environ.get("}
+	}
+
+	for row, line := range strings.Split(text, "\n") {
+		for _, prefix := range prefixes {
+			if strings.Contains(line, prefix) {
+				idx := strings.Index(line, prefix)
+				diagnostics = append(diagnostics, lsp.Diagnostic{
+					Range:    LineRange(row, idx, idx+len(prefix)),
+					Severity: 2,
+					Source:   "Nice",
+					Message:  "This is great",
+				})
+			}
+		}
+	}
+
+	return diagnostics
+}
+func LineRange(line, start, end int) lsp.Range {
+	return lsp.Range{
+		Start: lsp.Position{
+			Line:      line,
+			Character: start,
+		},
+		End: lsp.Position{
+			Line:      line,
+			Character: end,
+		},
+	}
 }
