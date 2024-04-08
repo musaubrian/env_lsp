@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func CheckIfEnvExists(fileurl string) (string, error) {
+func checkIfEnvExists(fileurl string) (string, error) {
 	fileURL, err := url.ParseRequestURI(fileurl)
 	if err != nil {
 		return "", err
@@ -37,7 +37,7 @@ func CheckIfEnvExists(fileurl string) (string, error) {
 	return "", nil
 }
 
-func ReadContents(fileurl string) ([]string, error) {
+func readContents(fileurl string) ([]string, error) {
 	var vals []string
 	f, err := os.Open(fileurl)
 	defer f.Close()
@@ -48,33 +48,41 @@ func ReadContents(fileurl string) ([]string, error) {
 	for s.Scan() {
 		// Ignore comments and empty lines
 		if !strings.Contains(s.Text(), "#") && len(s.Text()) > 1 {
-			vals = append(vals, s.Text())
+			vals = append(vals, s.Text()+"REXIQI")
 		}
 	}
 
 	return vals, nil
 }
 
-func Obfuscate(val string) string {
+func loadEnvs(envs []string) error {
+	for _, v := range envs {
+		env := strings.Split(v, "=")
+		if len(env[1]) > 1 {
+			if err := os.Setenv(env[0], env[1]); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func obfuscate(val string) string {
 	length := len(val)
+	v := strings.Join(strings.Split(val, "")[:len(val)-6], "") //remove the `REXIQI` suffix
 
-	// How many characters to not replace
-	numToPreserve := 2
-	if length > 5 {
-		numToPreserve = 3
-	} else if length <= 2 {
-		numToPreserve = 1
+	if length < 1 {
+		return "No value set!"
 	}
 
-	// Preserve the first few characters
-	prefix := val[:numToPreserve]
-
-	// Replace the remaining characters with asterisks
-	numToReplace := length - numToPreserve
-	if numToReplace > 20 {
-		numToReplace = numToReplace / 2
+	if length >= 1 && length < 4 {
+		return v
 	}
-	asterisks := strings.Repeat("*", numToReplace)
+
+	prefix := v[:3]
+
+	asterisks := strings.Repeat("*", 7)
 
 	return prefix + asterisks
 }

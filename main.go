@@ -94,24 +94,12 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 		}
 	case "textDocument/completion":
 		var request lsp.CompletionRequest
-		var options []string
 		if err := json.Unmarshal(contents, &request); err != nil {
 			logger.Printf("textDocument/completion: %s", err)
 			return
 		}
 
-		envLocation, err := analysis.CheckIfEnvExists(request.Params.TextDocument.URI)
-		if err != nil {
-			logger.Println(err)
-		}
-		if envLocation != "" {
-			opts, err := analysis.ReadContents(envLocation)
-			if err != nil {
-				logger.Println(err)
-			}
-			options = append(options, opts...)
-		}
-		response := state.TextDocumentCompletion(request.ID, request.Params, options)
+		response := state.TextDocumentCompletion(request.ID, request.Params, logger)
 		writeResponse(writer, response)
 	}
 }
@@ -127,5 +115,5 @@ func getLogger(filename string) *log.Logger {
 		panic("Could not open logfile")
 	}
 
-	return log.New(logfile, "[env_lsp]", log.Ldate|log.Ltime|log.Lshortfile)
+	return log.New(logfile, "[env_lsp] ", log.Ldate|log.Ltime|log.Lshortfile)
 }
