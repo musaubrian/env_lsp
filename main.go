@@ -60,7 +60,7 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 		}
 
 		logger.Printf("Opened: %s", request.Params.TextDocument.URI)
-		diagnostics := state.OpenDocument(request.Params.TextDocument.URI, request.Params.TextDocument.Text)
+		diagnostics := state.OpenDocument(request.Params.TextDocument.URI, request.Params.TextDocument.Text, logger)
 		writeResponse(writer, lsp.PublishDiagnosticsNotification{
 			Notification: lsp.Notification{
 				RPC:    "2.0",
@@ -80,7 +80,7 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 
 		logger.Printf("Changed: %s", request.Params.TextDocument.URI)
 		for _, change := range request.Params.ContentChanges {
-			diagnostics := state.UpdateDocument(request.Params.TextDocument.URI, change.Text)
+			diagnostics := state.UpdateDocument(request.Params.TextDocument.URI, change.Text, logger)
 			writeResponse(writer, lsp.PublishDiagnosticsNotification{
 				Notification: lsp.Notification{
 					RPC:    "2.0",
